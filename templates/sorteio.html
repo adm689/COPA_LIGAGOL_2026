@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorteio - SUPER COPA LIGAGOL 2026</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('/static/img/FUNDO.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      color: #FFFFFF;
+    }
+    header {
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #FFD700;
+      text-align: center;
+      padding: 1.5rem 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    header h1 { margin: 0; font-size: 2.5rem; }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    }
+    .bracket {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .bracket-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      gap: 20px;
+    }
+    .match {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+    }
+    .team-slot {
+      width: 200px;
+      height: 50px;
+      border: 1px solid #FFD700;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+    .team-slot span{
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 8px;
+      min-width: 0;
+    }
+    .team-slot img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      background:#fff;
+      flex: 0 0 auto;
+    }
+
+    #team-animation {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      z-index: 1000;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 3px solid #FFD700;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      color: #FFFFFF;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px #FFD700; }
+      50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 0px #FFD700; }
+      100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px #FFD700; }
+    }
+
+    .actions { margin-top: 20px; text-align: center; }
+    .actions button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      margin: 0 10px;
+      cursor: pointer;
+    }
+    .actions button.clear { background-color: #FF4500; color: #FFFFFF; }
+    .actions button.clear:hover { background-color: #FF6347; }
+
+    .day-pill{
+      display:inline-block;
+      padding:8px 12px;
+      border:1px solid rgba(255,215,0,.5);
+      border-radius:999px;
+      margin: 0 0 10px 0;
+      color:#FFD700;
+      font-weight:700;
+      background: rgba(0,0,0,.4);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SUPER COPA LIGAGOL 2026</h1>
+  </header>
+
+  <div class="container">
+    <div class="day-pill" id="dayPill">Dia: -</div>
+
+    <div id="designation">
+      <h2>Sorteio</h2>
+
+      <!-- ✅ Agora igual ao times.html: 12 slots (3 confrontos por chave) -->
+      <div class="bracket">
+        <div class="bracket-column">
+          <div class="match">
+            <div class="team-slot" id="left1-1"></div>
+            <div class="team-slot" id="left1-2"></div>
+          </div>
+          <div class="match">
+            <div class="team-slot" id="left2-1"></div>
+            <div class="team-slot" id="left2-2"></div>
+          </div>
+          <div class="match">
+            <div class="team-slot" id="left3-1"></div>
+            <div class="team-slot" id="left3-2"></div>
+          </div>
+        </div>
+
+        <div class="bracket-column">
+          <div class="match">
+            <div class="team-slot" id="right1-1"></div>
+            <div class="team-slot" id="right1-2"></div>
+          </div>
+          <div class="match">
+            <div class="team-slot" id="right2-1"></div>
+            <div class="team-slot" id="right2-2"></div>
+          </div>
+          <div class="match">
+            <div class="team-slot" id="right3-1"></div>
+            <div class="team-slot" id="right3-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+     <!--  <button class="clear" onclick="clearBracket()">Limpar e Recomeçar</button> -->
+    </div>
+  </div>
+
+  <div id="team-animation"></div>
+
+  <script>
+    let animationQueue = [];
+    let isAnimating = false;
+
+    // ✅ 12 slots (3 confrontos por chave)
+    const slotIds = [
+      "left1-1","left1-2",
+      "left2-1","left2-2",
+      "left3-1","left3-2",
+      "right1-1","right1-2",
+      "right2-1","right2-2",
+      "right3-1","right3-2"
+    ];
+
+    // slots antigos (legado) para limpeza, caso existam no storage
+    const legacySlotIds = ["left4-1","left4-2","right4-1","right4-2"];
+
+    function getDay() {
+      return localStorage.getItem("currentDay") || localStorage.getItem("cupActiveDay") || "sabado";
+    }
+
+    function slotKey(id) {
+      return `slot-${getDay()}-${id}`;
+    }
+
+    function setDayPill() {
+      const d = String(getDay()).trim().toLowerCase();
+      document.getElementById("dayPill").textContent = `Dia: ${d === "sabado" ? "Sabado" : "Domingo"}`;
+    }
+
+    function renderAllSlots() {
+      slotIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        const saved = localStorage.getItem(slotKey(id));
+        if (!saved) {
+          el.innerHTML = `<span style="opacity:.75;">—</span>`;
+          return;
+        }
+
+        try{
+          const team = JSON.parse(saved);
+          el.innerHTML = `<span title="${team.name}">${team.name}</span><img src="${team.logo}" alt="${team.name}">`;
+        }catch{
+          el.innerHTML = `<span style="opacity:.75;">—</span>`;
+        }
+      });
+    }
+
+    function playNextAnimation() {
+      if (isAnimating || animationQueue.length === 0) return;
+
+      const team = animationQueue.shift();
+      isAnimating = true;
+
+      const animationElement = document.getElementById("team-animation");
+      animationElement.style.display = "block";
+      animationElement.innerHTML = `
+        <h2 style="margin:0 0 10px;color:#FFD700;">${team.name}</h2>
+        <img src="${team.logo}" alt="${team.name}" style="width: 300px; height: 300px; border-radius: 50%; object-fit: cover; border:2px solid #FFD700; background:#fff;">
+      `;
+
+      setTimeout(() => {
+        animationElement.style.display = "none";
+        isAnimating = false;
+        playNextAnimation();
+      }, 2000);
+    }
+
+    function fullReload(){
+      setDayPill();
+      renderAllSlots();
+    }
+
+    // Atualiza em tempo real quando a tela principal mexer no localStorage
+    window.addEventListener("storage", (e) => {
+      if (!e.key) return;
+
+      // Se trocar o dia, recarrega tudo
+      if (e.key === "currentDay" || e.key === "cupActiveDay" || e.key === "cupLastUpdate") {
+        fullReload();
+        return;
+      }
+
+      // Só reage aos slots do DIA ATUAL
+      const prefix = `slot-${getDay()}-`;
+      if (e.key.startsWith(prefix)) {
+        renderAllSlots();
+
+        // anima quando entra um time novo
+        if (!e.oldValue && e.newValue) {
+          try {
+            animationQueue.push(JSON.parse(e.newValue));
+            playNextAnimation();
+          } catch {}
+        }
+      }
+    });
+
+    function clearBracket() {
+      const d = String(getDay()).trim().toLowerCase();
+      if (!confirm(`Limpar seleção do ${d === "sabado" ? "Sabado" : "Domingo"}?`)) return;
+
+      // limpa os 12 slots do dia atual
+      slotIds.forEach(id => localStorage.removeItem(`slot-${d}-${id}`));
+
+      // limpa legado (caso tenha sobrado)
+      legacySlotIds.forEach(id => localStorage.removeItem(`slot-${d}-${id}`));
+
+      // limpa pacote do dia
+      localStorage.removeItem(`designation-${d}`);
+
+      // ping para outras abas
+      localStorage.setItem("cupLastUpdate", String(Date.now()));
+
+      renderAllSlots();
+    }
+
+    // init
+    fullReload();
+  </script>
+</body>
+</html>

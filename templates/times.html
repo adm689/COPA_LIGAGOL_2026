@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SUPER COPA LIGAGOL SS AGROINDUSTRIAL 2026 </title>
+
+  <style>
+    body{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('/static/img/FUNDO.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      color: #FFFFFF;
+    }
+    header{
+      background-color: rgba(0,0,0,0.8);
+      color: #FFD700;
+      text-align: center;
+      padding: 1.5rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    header h1{ margin: 0; font-size: 2.2rem; }
+
+    .container{
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,215,0,.6);
+      background: rgba(255,215,0,.08);
+      color:#FFD700;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 10px;
+    }
+    @media (max-width: 980px){
+      .layout{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .card h2{
+      margin: 0 0 12px;
+      color:#FFD700;
+      font-size: 1.25rem;
+      text-align:center;
+    }
+
+    .match{
+      display:grid;
+      grid-template-columns: 1fr 64px 1fr;
+      gap: 10px;
+      align-items:center;
+      margin-bottom: 12px;
+    }
+    .vs{
+      text-align:center;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color:#FFD700;
+      opacity:.95;
+    }
+
+    .team-slot{
+      min-width: 0;
+      height: 56px;
+      border: 1px solid #FFD700;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      background-color: rgba(255,255,255,0.10);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform .12s ease, background .12s ease;
+    }
+    .team-slot:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.14); }
+    .team-slot.selected{ outline: 3px solid rgba(255,215,0,.35); }
+
+    .team-slot img{
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,.25);
+      background:#fff;
+      flex: 0 0 auto;
+    }
+    .team-slot span{
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 8px;
+      min-width: 0;
+    }
+
+    .team-list{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .team-item{
+      width: 170px;
+      height: 52px;
+      border: 1px solid #FFD700;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      background-color: rgba(255,255,255,0.10);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform .12s ease, background .12s ease;
+    }
+    .team-item:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.14); }
+    .team-item img{
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,.25);
+      background:#fff;
+      flex: 0 0 auto;
+    }
+    .team-item span{
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 8px;
+      min-width: 0;
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      justify-content: center;
+    }
+    button{
+      padding: 10px 16px;
+      font-size: 15px;
+      font-weight: 900;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .btn-save{ background:#28a745; color:#fff; }
+    .btn-clear{ background:#dc3545; color:#fff; }
+    .btn-draw{ background:#8b5cf6; color:#fff; }
+    .btn-present{ background:#f59e0b; color:#ffffff; }
+    .btn-champ{ background:#0b59f5; color:#ffffff; }
+    .btn-back{ background:#6c757d; color:#fff; }
+    .btn-undo{ background:#17a2b8; color:#fff; }
+
+    .hint{
+      margin-top: 10px;
+      text-align:center;
+      opacity:.85;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>SUPER COPA LIGAGOL SS AGROINDUSTRIAL 2026 - Confronto 2x2</h1>
+</header>
+
+<div class="container">
+
+  <div class="topbar">
+    <div class="badge" id="dayBadge">Dia: —</div>
+    <div class="badge" style="opacity:.9;border-color:rgba(255,255,255,.18);color:#fff;background:rgba(255,255,255,.08)">
+      Clique no slot → clique no time
+    </div>
+  </div>
+
+  <h2 style="margin:0 0 10px;color:#FFD700;text-align:center;">Distribuição dos Times</h2>
+
+  <div class="layout">
+    <div class="card">
+      <h2>Chave A</h2>
+
+      <div class="match">
+        <div class="team-slot" id="left1-1" onclick="selectSlot('left1-1')"></div>
+        <div class="vs">VS</div>
+        <div class="team-slot" id="left1-2" onclick="selectSlot('left1-2')"></div>
+      </div>
+
+      <div class="match">
+        <div class="team-slot" id="left2-1" onclick="selectSlot('left2-1')"></div>
+        <div class="vs">VS</div>
+        <div class="team-slot" id="left2-2" onclick="selectSlot('left2-2')"></div>
+      </div>
+
+      <div class="match" style="margin-bottom:0;">
+        <div class="team-slot" id="left3-1" onclick="selectSlot('left3-1')"></div>
+        <div class="vs">VS</div>
+        <div class="team-slot" id="left3-2" onclick="selectSlot('left3-2')"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Chave B</h2>
+
+      <div class="match">
+        <div class="team-slot" id="right1-1" onclick="selectSlot('right1-1')"></div>
+        <div class="vs">VS</div>
+        <div class="team-slot" id="right1-2" onclick="selectSlot('right1-2')"></div>
+      </div>
+
+      <div class="match">
+        <div class="team-slot" id="right2-1" onclick="selectSlot('right2-1')"></div>
+        <div class="vs">VS</div>
+        <div class="team-slot" id="right2-2" onclick="selectSlot('right2-2')"></div>
+      </div>
+
+      <div class="match" style="margin-bottom:0;">
+        <div class="team-slot" id="right3-1" onclick="selectSlot('right3-1')"></div>
+        <div class="vs">VS</div>
+        <div class="team-slot" id="right3-2" onclick="selectSlot('right3-2')"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px;">
+    <h3 style="margin:0 0 10px;color:#FFD700;">Times Disponíveis</h3>
+    <div class="team-list" id="teamList"></div>
+    <div class="hint">Mostra apenas os times do dia selecionado. Times já usados não aparecem.</div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-save" onclick="saveDesignation()">Salvar</button>
+    <button class="btn-clear" onclick="clearDesignation()">Limpar Todos</button>
+    <button class="btn-undo" onclick="undoLastSelection()">Limpar Último</button>
+    <button class="btn-draw" onclick="drawRandom()">Sortear 1</button>
+    <button class="btn-draw" onclick="drawRandomAll()">Sortear Todos</button>
+    <button class="btn-present" onclick="openPresentation()">Apresentação</button>
+    <button class="btn-back" onclick="returnToMenu()">Voltar</button>
+  </div>
+
+</div>
+
+<script>
+  // =============================
+  // DIA (prioridade: currentDay)
+  // =============================
+  function normalizeDay(d){ return (d ?? "").toString().trim().toLowerCase(); }
+
+  function dayKey(){
+    const raw =
+      localStorage.getItem("currentDay") ||
+      localStorage.getItem("cupActiveDay") ||
+      "sabado";
+    const d = normalizeDay(raw);
+    return d || "sabado";
+  }
+  function dayLabel(day){
+    return day === "domingo" ? "Domingo" : "Sábado";
+  }
+  function paintDayUI(){
+    document.getElementById("dayBadge").textContent = `Dia: ${dayLabel(dayKey())}`;
+  }
+
+  // =============================
+  // TIMES (✅ SOMENTE POR DIA: teams-<dia>)
+  // =============================
+  let teams = []; // sempre carregado do localStorage do dia
+
+  function teamsKey(){ return `teams-${dayKey()}`; }
+
+  function loadTeamsFromLocalStorage(){
+    teams = [];
+
+    const rawDay = localStorage.getItem(teamsKey()); // ✅ sem fallback em "teams"
+    if (!rawDay) return;
+
+    try{
+      const arr = JSON.parse(rawDay);
+      if (Array.isArray(arr)) {
+        teams = arr
+          .filter(Boolean)
+          .filter(t => t?.name && t?.logo)
+          .map(t => ({ name: t.name, logo: t.logo }));
+      }
+    }catch{}
+  }
+
+  // =============================
+  // SLOTS 2x2 (12)
+  // =============================
+  const slotIds = [
+    "left1-1","left1-2",
+    "left2-1","left2-2",
+    "left3-1","left3-2",
+    "right1-1","right1-2",
+    "right2-1","right2-2",
+    "right3-1","right3-2"
+  ];
+
+  // slots antigos (legado) — definido para NÃO quebrar o script
+  const legacySlotIds = ["left4-1","left4-2","right4-1","right4-2"];
+
+  let selectedSlot = null;
+
+  function slotKey(slotId){ return `slot-${dayKey()}-${slotId}`; }
+  function designationKey(){ return `designation-${dayKey()}`; }
+
+    // =============================
+  // DESFAZER (histórico por dia)
+  // =============================
+  function historyKey(){ return `slotHistory-${dayKey()}`; }
+
+  function getHistory(){
+    const raw = localStorage.getItem(historyKey());
+    if (!raw) return [];
+    try {
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function setHistory(arr){
+    localStorage.setItem(historyKey(), JSON.stringify(arr || []));
+  }
+
+  function pushHistory(entry){
+    const hist = getHistory();
+    hist.push(entry);
+    setHistory(hist);
+  }
+
+  function undoLastSelection(){
+    const hist = getHistory();
+    if (!hist.length) {
+      alert("Não há nenhuma ação para desfazer neste dia.");
+      return;
+    }
+
+    const last = hist.pop();
+    setHistory(hist);
+
+    const { slotId, prev } = last || {};
+    if (!slotId) return;
+
+    if (prev && prev.name && prev.logo) {
+      localStorage.setItem(slotKey(slotId), JSON.stringify(prev));
+      renderSlot(slotId, prev);
+    } else {
+      localStorage.removeItem(slotKey(slotId));
+      renderSlot(slotId, null);
+    }
+
+    if (selectedSlot === slotId) {
+      const el = document.getElementById(selectedSlot);
+      if (el) el.classList.remove("selected");
+      selectedSlot = null;
+    }
+
+    saveDesignation({ silent: true });
+    loadTeams();
+  }
+
+   //====================================
+  // Render Slot
+  //=====================================
+  function renderSlot(slotId, team){
+    const el = document.getElementById(slotId);
+    if (!el) return;
+
+    if (!team){
+      el.innerHTML = `<span style="opacity:.75;">— vazio —</span>`;
+      return;
+    }
+    el.innerHTML = `<span title="${team.name}">${team.name}</span><img src="${team.logo}" alt="${team.name}">`;
+  }
+
+  function selectSlot(slotId){
+    if (selectedSlot){
+      const prev = document.getElementById(selectedSlot);
+      if (prev) prev.classList.remove("selected");
+    }
+    selectedSlot = slotId;
+    const el = document.getElementById(slotId);
+    if (el) el.classList.add("selected");
+  }
+
+  function isTeamUsed(team){
+    const packed = localStorage.getItem(designationKey());
+    if (packed){
+      try{
+        const obj = JSON.parse(packed);
+        return Object.values(obj || {}).some(t => t && t.name === team.name && t.logo === team.logo);
+      }catch{}
+    }
+
+    for (const sid of slotIds){
+      const raw = localStorage.getItem(slotKey(sid));
+      if (!raw) continue;
+      try{
+        const t = JSON.parse(raw);
+        if (t && t.name === team.name && t.logo === team.logo) return true;
+      }catch{}
+    }
+
+    // legado do dia (se existir)
+    for (const sid of legacySlotIds){
+      const raw = localStorage.getItem(`slot-${dayKey()}-${sid}`);
+      if (!raw) continue;
+      try{
+        const t = JSON.parse(raw);
+        if (t && t.name === team.name && t.logo === team.logo) return true;
+      }catch{}
+    }
+
+    return false;
+  }
+
+  function loadTeams(){
+    const teamList = document.getElementById("teamList");
+    teamList.innerHTML = "";
+
+    if (!teams.length){
+      teamList.innerHTML = `<div style="opacity:.85;">Nenhum time cadastrado para ${dayLabel(dayKey())}. Vá em "Cadastrar Times" no menu e cadastre para este dia.</div>`;
+      return;
+    }
+
+    teams.forEach((team, index) => {
+      if (!isTeamUsed(team)){
+        const div = document.createElement("div");
+        div.className = "team-item";
+        div.innerHTML = `<span title="${team.name}">${team.name}</span><img src="${team.logo}" alt="${team.name}">`;
+        div.onclick = () => selectTeam(index);
+        teamList.appendChild(div);
+      }
+    });
+
+    if (!teamList.children.length){
+      teamList.innerHTML = `<div style="opacity:.85;">Sem times disponíveis (todos já foram usados).</div>`;
+    }
+  }
+
+    function selectTeam(index){
+    if (!selectedSlot){
+      alert("Selecione um slot antes de atribuir o time.");
+      return;
+    }
+
+    const team = teams[index];
+
+    // snapshot do que existia no slot (se houver)
+    let prev = null;
+    const prevRaw = localStorage.getItem(slotKey(selectedSlot));
+    if (prevRaw) {
+      try { prev = JSON.parse(prevRaw); } catch {}
+    }
+
+    // histórico (para desfazer)
+    pushHistory({
+      ts: Date.now(),
+      slotId: selectedSlot,
+      prev: (prev && prev.name && prev.logo) ? prev : null,
+      next: team
+    });
+
+    localStorage.setItem(slotKey(selectedSlot), JSON.stringify(team));
+    renderSlot(selectedSlot, team);
+
+    const el = document.getElementById(selectedSlot);
+    if (el) el.classList.remove("selected");
+    selectedSlot = null;
+
+    saveDesignation({ silent: true });
+    loadTeams();
+  }
+
+
+  function saveDesignation({ silent = false } = {}){
+    const designation = {};
+    let filled = 0;
+
+    slotIds.forEach(id => {
+      const raw = localStorage.getItem(slotKey(id));
+      if (!raw) return;
+      try{
+        const t = JSON.parse(raw);
+        if (t?.name && t?.logo) {
+          designation[id] = t;
+          filled++;
+        }
+      }catch{}
+    });
+
+    localStorage.setItem(designationKey(), JSON.stringify(designation));
+
+    // sincroniza
+    localStorage.setItem("cupActiveDay", dayKey());
+    localStorage.setItem("cupLastUpdate", String(Date.now()));
+
+    if (!silent){
+      alert(`Designação salva (${dayLabel(dayKey())})! Slots preenchidos: ${filled}/${slotIds.length}`);
+    }
+  }
+
+  function loadSavedDesignation(){
+    const packed = localStorage.getItem(designationKey());
+    if (packed){
+      try{
+        const obj = JSON.parse(packed);
+        slotIds.forEach(id => renderSlot(id, obj?.[id] || null));
+        loadTeams();
+        return;
+      }catch{}
+    }
+
+    slotIds.forEach(id => {
+      const raw = localStorage.getItem(slotKey(id));
+      if (!raw) return renderSlot(id, null);
+      try{ renderSlot(id, JSON.parse(raw)); }
+      catch{ renderSlot(id, null); }
+    });
+
+    loadTeams();
+  }
+
+  // =============================
+  // RESET FORTE DO CAMPEONATO DO DIA
+  // =============================
+  function resetDayTournamentState(day){
+    const directKeys = [
+      `cupState-${day}`, `cupState_${day}`,
+      `campState-${day}`, `campState_${day}`,
+      `champState-${day}`, `champState_${day}`,
+      `bracketState-${day}`, `bracketState_${day}`,
+      `phaseState-${day}`, `phaseState_${day}`,
+      `matchState-${day}`, `matchState_${day}`,
+      `selectionVersion-${day}`, `cupSelectionVersion-${day}`,
+    ];
+    directKeys.forEach(k => localStorage.removeItem(k));
+
+    ["cupState","campState","champState","bracketState","phaseState","matchState"]
+      .forEach(k => localStorage.removeItem(k));
+
+    for (let i = localStorage.length - 1; i >= 0; i--){
+      const k = localStorage.key(i);
+      if (!k) continue;
+
+      const endsWithDay = k.endsWith(`-${day}`) || k.endsWith(`_${day}`);
+      const looksLikeTournament = /cup|camp|champ|bracket|phase|round|match/i.test(k);
+
+      if (endsWithDay && looksLikeTournament){
+        localStorage.removeItem(k);
+      }
+    }
+
+    localStorage.setItem("cupLastUpdate", String(Date.now()));
+  }
+
+  function clearDesignation(){
+    const day = dayKey();
+    const ok = confirm(`Deseja limpar a seleção do ${dayLabel(day)}?\nIsso também vai reiniciar o campeonato desse dia.`);
+    if (!ok) return;
+
+    slotIds.forEach(id => localStorage.removeItem(`slot-${day}-${id}`));
+    legacySlotIds.forEach(id => localStorage.removeItem(`slot-${day}-${id}`));
+
+    localStorage.removeItem(`designation-${day}`);
+    localStorage.removeItem(`slotHistory-${day}`);
+
+
+    resetDayTournamentState(day);
+
+    slotIds.forEach(id => renderSlot(id, null));
+    selectedSlot = null;
+
+    loadTeams();
+    alert(`Seleção e campeonato do ${dayLabel(day)} foram limpos!`);
+  }
+
+  // =============================
+  // APRESENTAÇÃO
+  // =============================
+  let presentationWindow = null;
+  function openPresentation(){
+    localStorage.setItem("cupActiveDay", dayKey());
+    const url = "/sorteio"; // ajuste se necessário
+
+    if (presentationWindow && !presentationWindow.closed){
+      presentationWindow.focus();
+      return;
+    }
+    presentationWindow = window.open(
+      url,
+      "apresentacao_times",
+      "width=1280,height=720,menubar=0,toolbar=0,location=0,status=0"
+    );
+  }
+
+  // =============================
+  // VALIDAR SLOTS PARA CAMPEONATO
+  // =============================
+  function isAllSlotsFilled() {
+    const day = dayKey();
+
+    const packed = localStorage.getItem(`designation-${day}`);
+    if (packed) {
+      try {
+        const obj = JSON.parse(packed);
+        const complete = slotIds.every(id => obj?.[id] && obj[id].name && obj[id].logo);
+        if (complete) return true;
+      } catch {}
+    }
+
+    return slotIds.every(id => {
+      const raw = localStorage.getItem(`slot-${day}-${id}`);
+      if (!raw) return false;
+      try {
+        const t = JSON.parse(raw);
+        return t && t.name && t.logo;
+      } catch {
+        return false;
+      }
+    });
+  }
+
+  // =============================
+  // COMEÇAR CAMPEONATO
+  // =============================
+  function openChamp(){
+    const day = dayKey();
+
+    if (!isAllSlotsFilled()) {
+      alert(`Você precisa preencher todos os ${slotIds.length} slots antes de abrir o campeonato (${dayLabel(day)}).`);
+      return;
+    }
+
+    const ok = confirm(`Se um campeonato já estiver em andamento para esse dia, ele será reiniciado ao abrir um novo campeonato.\nDeseja continuar?`);
+    if (!ok) return;
+
+    saveDesignation({ silent: true });
+    localStorage.setItem("cupActiveDay", day);
+
+    resetDayTournamentState(day);
+
+    window.location.href = "/campeonato";
+  }
+
+  function returnToMenu(){
+    localStorage.setItem("cupActiveDay", dayKey());
+    window.location.href = "/";
+  }
+
+  // =============================
+  // SORTEIO (12)
+  // =============================
+  function shuffleArray(arr){
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function hasAnySlotFilled(){
+    const day = dayKey();
+
+    const packed = localStorage.getItem(`designation-${day}`);
+    if (packed) {
+      try {
+        const obj = JSON.parse(packed);
+        return slotIds.some(id => obj?.[id] && obj[id].name && obj[id].logo);
+      } catch {}
+    }
+
+    return slotIds.some(id => {
+      const raw = localStorage.getItem(`slot-${day}-${id}`);
+      if (!raw) return false;
+      try {
+        const t = JSON.parse(raw);
+        return t && t.name && t.logo;
+      } catch {
+        return false;
+      }
+    });
+  }
+
+    function drawRandom(){
+    loadTeamsFromLocalStorage();
+    if (!teams.length){
+      alert(`Não há times cadastrados para ${dayLabel(dayKey())}. Cadastre times para este dia primeiro.`);
+      return;
+    }
+    if (teams.length < slotIds.length) {
+      alert(`Você precisa ter ${slotIds.length} times cadastrados para fazer o sorteio. (Atualmente: ${teams.length})`);
+      return;
+    }
+
+    const nextSlot = slotIds.find(id => {
+      const raw = localStorage.getItem(slotKey(id));
+      if (!raw) return true;
+      try {
+        const t = JSON.parse(raw);
+        return !(t && t.name && t.logo);
+      } catch {
+        return true;
+      }
+    });
+
+    if (!nextSlot) {
+      alert(`Todos os slots já estão preenchidos (${dayLabel(dayKey())}).`);
+      return;
+    }
+
+    const availableTeams = teams.filter(t => !isTeamUsed(t));
+    if (!availableTeams.length) {
+      alert("Sem times disponíveis para sortear (todos já foram usados).");
+      return;
+    }
+
+    const team = availableTeams[Math.floor(Math.random() * availableTeams.length)];
+
+    // histórico (para desfazer)
+    pushHistory({
+      ts: Date.now(),
+      slotId: nextSlot,
+      prev: null,
+      next: team
+    });
+
+    localStorage.setItem(slotKey(nextSlot), JSON.stringify(team));
+    renderSlot(nextSlot, team);
+
+    saveDesignation({ silent: true });
+    selectedSlot = null;
+    loadTeams();
+  }
+
+  function drawRandomAll(){
+    loadTeamsFromLocalStorage();
+    if (!teams.length){
+      alert(`Não há times cadastrados para ${dayLabel(dayKey())}. Cadastre times para este dia primeiro.`);
+      return;
+    }
+    if (teams.length < slotIds.length) {
+      alert(`Você precisa ter ${slotIds.length} times cadastrados para fazer o sorteio. (Atualmente: ${teams.length})`);
+      return;
+    }
+
+    if (hasAnySlotFilled()) {
+      const ok = confirm(`Já existe seleção preenchida para ${dayLabel(dayKey())}.\nDeseja substituir pelo sorteio aleatório?`);
+      if (!ok) return;
+    }
+
+    const shuffled = shuffleArray(teams).slice(0, slotIds.length);
+
+    // começa um histórico novo para esse sorteio
+    setHistory([]);
+
+    slotIds.forEach((slotId, idx) => {
+      const team = shuffled[idx];
+
+      pushHistory({
+        ts: Date.now(),
+        slotId,
+        prev: null,
+        next: team
+      });
+
+      localStorage.setItem(slotKey(slotId), JSON.stringify(team));
+      renderSlot(slotId, team);
+    });
+
+    saveDesignation({ silent: true });
+
+    selectedSlot = null;
+    loadTeams();
+
+    alert(`Sorteio concluído! (${dayLabel(dayKey())})`);
+  }
+
+
+  // =============================
+  // INIT + mudança de dia em outra aba
+  // =============================
+  function fullReloadForDay(){
+    paintDayUI();
+
+    loadTeamsFromLocalStorage(); // ✅ só teams-<dia>
+    selectedSlot = null;
+
+    // limpa legado do dia atual, se existir
+    legacySlotIds.forEach(id => localStorage.removeItem(`slot-${dayKey()}-${id}`));
+
+    slotIds.forEach(id => renderSlot(id, null));
+    loadSavedDesignation();
+  }
+
+  window.addEventListener("storage", (e) => {
+    if (!e.key) return;
+    if (e.key === "currentDay" || e.key === "cupActiveDay" || e.key === "cupLastUpdate"){
+      fullReloadForDay();
+    }
+  });
+
+  // init
+  fullReloadForDay();
+</script>
+
+</body>
+</html>

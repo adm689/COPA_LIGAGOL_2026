@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Campeonatos</title>
+
+  <style>
+    :root{
+      --bg0:#0b1020;
+      --bg1:#0f1733;
+      --card: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --gold:#FFD700;
+      --gold2:#ffea7a;
+      --blue:#3b82f6;
+      --blue2:#2563eb;
+      --green:#22c55e;
+      --red:#ef4444;
+      --amber:#f59e0b;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(59,130,246,.28), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(255,215,0,.18), transparent 60%),
+        radial-gradient(1000px 600px at 50% 110%, rgba(34,197,94,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      padding:18px 14px;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+
+    .brand{
+      max-width:1180px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:1.55rem;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,215,0,.55);
+      background: rgba(255,215,0,.08);
+      color: var(--gold2);
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .pill small{
+      color:rgba(255,255,255,.75);
+      font-weight:800;
+    }
+
+    .container{
+      max-width:1180px;
+      margin:18px auto 28px;
+      padding:0 14px;
+    }
+
+    .panel{
+      background: var(--card);
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:0 18px 45px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+
+    .panelHeader{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+
+    .panelHeader h2{
+      margin:0;
+      font-size:1.2rem;
+    }
+
+    .panelHeader p{
+      margin:6px 0 0;
+      color:var(--muted);
+      max-width:760px;
+      line-height:1.35;
+    }
+
+    .panelHeader .right{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .hidden{ display:none; }
+
+    .btn{
+      border:0;
+      cursor:pointer;
+      padding:11px 14px;
+      border-radius:12px;
+      font-weight:900;
+      color:#fff;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      transition: transform .12s ease, filter .12s ease, background .12s ease;
+      box-shadow:0 10px 22px rgba(0,0,0,.22);
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+    .btn:active{ transform: translateY(0) scale(.99); }
+
+    .btn-primary{ background: linear-gradient(180deg, var(--blue), var(--blue2)); border: 1px solid rgba(59,130,246,.45); }
+    .btn-success{ background: linear-gradient(180deg, #2dd46a, #16a34a); border: 1px solid rgba(34,197,94,.45); }
+    .btn-danger{ background: linear-gradient(180deg, #ff5a5a, #dc2626); border: 1px solid rgba(239,68,68,.45); }
+    .btn-muted{ background: rgba(255,255,255,.10); color: rgba(255,255,255,.9); }
+    .btn-amber{ background: linear-gradient(180deg, #ffcc66, #f59e0b); border:1px solid rgba(245,158,11,.5); color:#1a1a1a; }
+    .btn-ghost{ background: transparent; border:1px solid rgba(255,255,255,.16); color: rgba(255,255,255,.88); box-shadow:none; }
+
+    .menu{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+
+    @media (max-width: 880px){
+      .menu{ grid-template-columns:1fr; }
+    }
+
+    .dayGrid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+
+    @media (max-width: 760px){
+      .dayGrid{ grid-template-columns:1fr; }
+    }
+
+    .dayCard{
+      position:relative;
+      padding:16px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      overflow:hidden;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .dayCard:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.09);
+    }
+
+    .dayCard h3{
+      margin:0;
+      font-size:1.2rem;
+      color:var(--gold2);
+    }
+
+    .dayCard p{
+      margin:8px 0 0;
+      color:var(--muted);
+      line-height:1.35;
+    }
+
+    .dayTag{
+      position:absolute;
+      right:12px;
+      top:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+      background: rgba(255,215,0,.10);
+      border:1px solid rgba(255,215,0,.30);
+      color:var(--gold2);
+      white-space:nowrap;
+    }
+
+    form{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+
+    @media (max-width: 760px){
+      form{ grid-template-columns:1fr; }
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    label{
+      font-weight:900;
+      color: rgba(255,255,255,.85);
+      font-size:13px;
+    }
+
+    input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.20);
+      color:#fff;
+      outline:none;
+    }
+
+    input::placeholder{ color: rgba(255,255,255,.55); }
+
+    input:focus{
+      border-color: rgba(255,215,0,.45);
+      box-shadow: 0 0 0 4px rgba(255,215,0,.12);
+    }
+
+    .formActions{
+      grid-column: 1 / -1;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-start;
+      margin-top:2px;
+    }
+
+    ul{
+      list-style:none;
+      padding:0;
+      margin:12px 0 0;
+    }
+
+    li{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px;
+      border-radius:16px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      margin-bottom:10px;
+      overflow:hidden;
+    }
+
+    .teamLeft{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+      flex:1;
+    }
+
+    .teamLeft img{
+      width:52px;
+      height:52px;
+      border-radius:12px;
+      object-fit:cover;
+      border:1px solid rgba(255,255,255,.16);
+      background:#fff;
+    }
+
+    .teamLeft .meta{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+    }
+
+    .teamLeft .name{
+      font-weight:950;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      font-size:16px;
+    }
+
+    .teamLeft .status{
+      color: rgba(255,255,255,.72);
+      font-weight:800;
+      font-size:12px;
+    }
+
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .btn-sm{
+      padding:9px 10px;
+      border-radius:12px;
+      font-size:13px;
+      box-shadow:none;
+    }
+
+    .details{
+      margin-top:12px;
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+    }
+
+    .details img{
+      width:110px;
+      height:110px;
+      border-radius:18px;
+      object-fit:cover;
+      border:1px solid rgba(255,255,255,.16);
+      background:#fff;
+    }
+
+    .details .box{
+      flex:1;
+      min-width:240px;
+      padding:14px;
+      border-radius:16px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .details .box h3{
+      margin:0 0 8px;
+      color:var(--gold2);
+    }
+
+    .details .box p{
+      margin:6px 0 0;
+      color: rgba(255,255,255,.85);
+    }
+
+    .hint{
+      margin-top:10px;
+      color: rgba(255,255,255,.72);
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .counter{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      font-weight:900;
+      color:var(--gold2);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="brand">
+      <h1>🏆 Sistema de Campeonatos</h1>
+      <div class="pill" id="dayPill">Dia: <small>—</small></div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <div id="teamSelection" class="panel">
+      <div class="panelHeader">
+        <div>
+          <h2>Selecione o dia do torneio</h2>
+          <p>Os dados ficam separados por dia.</p>
+        </div>
+      </div>
+
+      <div class="dayGrid">
+        <div class="dayCard" onclick="goToMenu('quarta')">
+          <div class="dayTag">QUARTA-FEIRA</div>
+          <h3>Quarta — 25/03</h3>
+          <p>Gerencie 24 times do dia e os confrontos.</p>
+        </div>
+
+        <div class="dayCard" onclick="goToMenu('quinta')">
+          <div class="dayTag">QUINTA-FEIRA</div>
+          <h3>Quinta — 26/03</h3>
+          <p>Gerencie 24 times do dia e os confrontos.</p>
+        </div>
+      </div>
+
+      <div class="hint">A lista base de cada dia fica no próprio código, para você editar nome e imagem quando quiser.</div>
+    </div>
+
+    <div id="menu" class="panel hidden">
+      <div class="panelHeader">
+        <div>
+          <h2>Menu</h2>
+          <p>Escolha uma ação para o dia atual.</p>
+        </div>
+        <div class="right">
+          <button class="btn btn-ghost" type="button" onclick="backToDaySelect()">Trocar dia</button>
+        </div>
+      </div>
+
+      <div class="menu">
+        <button class="btn btn-primary" onclick="openTeamRegistration()">👥 Cadastrar Times</button>
+        <button class="btn btn-muted" onclick="viewTeams()">📋 Ver Times Cadastrados</button>
+        <button class="btn btn-amber" onclick="createSelecao()">⚔️ Confronto 3x3</button>
+      </div>
+    </div>
+
+    <div id="teamRegistration" class="panel hidden">
+      <div class="panelHeader">
+        <div>
+          <h2>Cadastrar times</h2>
+          <p>Cadastre até 24 times para o dia selecionado.</p>
+        </div>
+        <div class="right">
+          <button class="btn btn-ghost" type="button" onclick="returnToMenu()">Voltar</button>
+        </div>
+      </div>
+
+      <div class="counter" id="teamCounter">Times cadastrados: 0 / 24</div>
+
+      <form id="teamForm">
+        <div class="field">
+          <label for="teamName">Nome do time</label>
+          <input type="text" id="teamName" placeholder="Ex.: E.C LEÃO 70" required />
+        </div>
+
+        <div class="field">
+          <label for="teamLogo">Logo (imagem)</label>
+          <input type="file" id="teamLogo" accept="image/*" required />
+        </div>
+
+        <div class="formActions">
+          <button class="btn btn-success" id="submitTeamBtn" type="submit">✅ Cadastrar Time</button>
+          <button class="btn btn-muted" type="button" onclick="viewTeams()">📋 Ver Times</button>
+        </div>
+      </form>
+
+      <div class="hint">Cada dia aceita no máximo 24 times.</div>
+    </div>
+
+    <div id="viewTeams" class="panel hidden">
+      <div class="panelHeader">
+        <div>
+          <h2>Times cadastrados</h2>
+          <p>Editar, excluir ou ver detalhes.</p>
+        </div>
+        <div class="right">
+          <button class="btn btn-ghost" type="button" onclick="returnToMenu()">Voltar</button>
+        </div>
+      </div>
+
+      <div class="counter" id="teamCounterView">Times cadastrados: 0 / 24</div>
+      <ul id="teamList"></ul>
+    </div>
+
+    <div id="teamDetails" class="panel hidden">
+      <div class="panelHeader">
+        <div>
+          <h2>Detalhes do time</h2>
+          <p>Informações do cadastro.</p>
+        </div>
+        <div class="right">
+          <button class="btn btn-ghost" type="button" onclick="returnToMenu()">Voltar</button>
+        </div>
+      </div>
+
+      <div id="teamInfo"></div>
+    </div>
+
+    <div id="designation" class="panel hidden">
+      <div class="panelHeader">
+        <div>
+          <h2>Designação dos times</h2>
+          <p>Esta etapa normalmente é feita na página /times.</p>
+        </div>
+        <div class="right">
+          <button class="btn btn-ghost" type="button" onclick="returnToMenu()">Voltar</button>
+        </div>
+      </div>
+
+      <div class="hint">Abra /times para montar o confronto 2x2 e salvar a designação.</div>
+      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-success" type="button" onclick="saveDesignation()">💾 Salvar Designação</button>
+      </div>
+    </div>
+
+    <div id="startCup" class="panel hidden">
+      <div class="panelHeader">
+        <div>
+          <h2>Fases da Copa</h2>
+          <p>Visualização/atalho.</p>
+        </div>
+        <div class="right">
+          <button class="btn btn-ghost" type="button" onclick="returnToMenu()">Voltar</button>
+        </div>
+      </div>
+
+      <div id="tournamentBracket"></div>
+    </div>
+
+  </div>
+
+  <script>
+    const MAX_TEAMS = 24;
+    const REQUIRED_SLOTS = 24;
+    const DEFAULT_LOGO = "/static/logos/DEFAULT.png";
+
+    let currentDay = localStorage.getItem("currentDay") || null;
+    let teams = [];
+    let designation = [];
+
+    function normalizeDay(d){
+      return (d || "").toString().trim().toLowerCase();
+    }
+
+    function getDay() {
+      return normalizeDay(localStorage.getItem("currentDay") || currentDay || "quarta");
+    }
+
+    function setDay(day){
+      currentDay = normalizeDay(day);
+      localStorage.setItem("currentDay", currentDay);
+      paintDayPill();
+    }
+
+    function paintDayPill(){
+      const day = getDay();
+      const label = day === "quinta" ? "Quinta" : "Quarta";
+      document.getElementById("dayPill").innerHTML = `Dia: <small>${label}</small>`;
+    }
+
+    function teamsKey()       { return `teams-${getDay()}`; }
+    function designationKey() { return `designation-${getDay()}`; }
+    function cupKey()         { return `cupState-${getDay()}`; }
+    function slotKey(id)      { return `slot-${getDay()}-${id}`; }
+
+    function teamBelongsToCurrentDay(team){
+      return normalizeDay(team?.playDay) === getDay();
+    }
+
+    // =====================================================
+    // LISTA FIXA NO CÓDIGO — EDITE NOMES E IMAGENS AQUI
+    // =====================================================
+    const defaultTeams = [
+      // ================= QUARTA =================
+      { name: "Quarta 01", logo: "/static/logos/ada.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "AJAX", logo: "/static/logos/ajax.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Arsenal guarulhos", logo: "/static/logos/ARSENAL_GUARULHOS.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 04", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 05", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 06", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 07", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 08", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 09", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 10", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 11", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 12", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 13", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 14", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 15", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 16", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 17", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 18", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 19", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 20", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 21", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 22", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 23", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+      { name: "Quarta 24", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
+
+      // ================= QUINTA =================
+      { name: "Quinta 01", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 02", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 03", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 04", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 05", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 06", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 07", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 08", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 09", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 10", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 11", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 12", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 13", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 14", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 15", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 16", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 17", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 18", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 19", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 20", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 21", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 22", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 23", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
+      { name: "Quinta 24", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" }
+    ];
+
+    function getBaseTeamsForDay(day){
+      return defaultTeams
+        .filter(team => normalizeDay(team.playDay) === day)
+        .slice(0, MAX_TEAMS)
+        .map(team => ({
+          name: team.name,
+          logo: team.logo || DEFAULT_LOGO,
+          status: team.status || "Ativo",
+          eliminatedIn: team.eliminatedIn ?? null,
+          eliminatedBy: team.eliminatedBy ?? null,
+          playDay: day
+        }));
+    }
+
+    function updateCounter(){
+      const total = teams.length;
+      const text = `Times cadastrados: ${total} / ${MAX_TEAMS}`;
+      const reg = document.getElementById("teamCounter");
+      const view = document.getElementById("teamCounterView");
+
+      if (reg) reg.textContent = text;
+      if (view) view.textContent = text;
+
+      const submitBtn = document.getElementById("submitTeamBtn");
+      if (submitBtn) {
+        submitBtn.disabled = total >= MAX_TEAMS;
+        submitBtn.style.opacity = total >= MAX_TEAMS ? ".6" : "1";
+        submitBtn.style.cursor = total >= MAX_TEAMS ? "not-allowed" : "pointer";
+      }
+    }
+
+    function mergeWithBaseTeams(savedTeams, day){
+      const baseTeams = getBaseTeamsForDay(day);
+      const saved = Array.isArray(savedTeams)
+        ? savedTeams
+            .filter(Boolean)
+            .filter(team => normalizeDay(team.playDay || day) === day)
+        : [];
+
+      const merged = [];
+
+      for (let i = 0; i < MAX_TEAMS; i++) {
+        const base = baseTeams[i] || {
+          name: `${day} ${String(i + 1).padStart(2, "0")}`,
+          logo: DEFAULT_LOGO,
+          status: "Ativo",
+          eliminatedIn: null,
+          eliminatedBy: null,
+          playDay: day
+        };
+
+        const existing = saved[i];
+
+        merged.push({
+          name: existing?.name || base.name,
+          logo: existing?.logo || base.logo,
+          status: existing?.status || base.status || "Ativo",
+          eliminatedIn: existing?.eliminatedIn ?? base.eliminatedIn ?? null,
+          eliminatedBy: existing?.eliminatedBy ?? base.eliminatedBy ?? null,
+          playDay: day
+        });
+      }
+
+      return merged.slice(0, MAX_TEAMS);
+    }
+
+    function saveTeamsToLocalStorage() {
+      teams = teams
+        .filter(teamBelongsToCurrentDay)
+        .slice(0, MAX_TEAMS);
+
+      localStorage.setItem(teamsKey(), JSON.stringify(teams));
+      updateCounter();
+    }
+
+    function loadTeamsFromLocalStorage() {
+      const key = teamsKey();
+      const day = getDay();
+      const stored = localStorage.getItem(key);
+
+      try {
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          teams = mergeWithBaseTeams(parsed, day);
+          localStorage.setItem(key, JSON.stringify(teams));
+          updateCounter();
+          return;
+        }
+      } catch (e) {}
+
+      teams = getBaseTeamsForDay(day);
+      localStorage.setItem(key, JSON.stringify(teams));
+      updateCounter();
+    }
+
+    function showOnly(id){
+      const sections = document.querySelectorAll(".container > div");
+      sections.forEach(s => s.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+    }
+
+    function backToDaySelect(){
+      showOnly("teamSelection");
+    }
+
+    function goToMenu(day) {
+      setDay(day);
+      loadTeamsFromLocalStorage();
+      showOnly("menu");
+    }
+
+    function openTeamRegistration() {
+      loadTeamsFromLocalStorage();
+      updateCounter();
+      showOnly("teamRegistration");
+    }
+
+    function returnToMenu() {
+      showOnly("menu");
+    }
+
+    document.getElementById("teamForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      loadTeamsFromLocalStorage();
+
+      const name = document.getElementById("teamName").value.trim();
+      const logoFile = document.getElementById("teamLogo").files[0];
+
+      if (!name || !logoFile) return;
+
+      if (teams.length >= MAX_TEAMS) {
+        alert(`Este dia já está com ${MAX_TEAMS} times.`);
+        updateCounter();
+        return;
+      }
+
+      const nameExists = teams.some(t => t.name.toLowerCase() === name.toLowerCase());
+      if (nameExists) {
+        alert("Já existe um time com esse nome neste dia.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (evt) {
+        teams.push({
+          name,
+          logo: evt.target.result,
+          status: "Ativo",
+          eliminatedIn: null,
+          eliminatedBy: null,
+          playDay: getDay()
+        });
+
+        teams = teams.slice(0, MAX_TEAMS);
+        localStorage.setItem(teamsKey(), JSON.stringify(teams));
+        updateCounter();
+
+        alert("Time cadastrado com sucesso!");
+        document.getElementById("teamName").value = "";
+        document.getElementById("teamLogo").value = "";
+      };
+      reader.readAsDataURL(logoFile);
+    });
+
+    function viewTeams() {
+      loadTeamsFromLocalStorage();
+      updateCounter();
+      showOnly("viewTeams");
+
+      const teamList = document.getElementById("teamList");
+      teamList.innerHTML = "";
+
+      teams.forEach((team, index) => {
+        const dia = normalizeDay(team.playDay) || getDay();
+        const diaLabel = dia === "quinta" ? "Quinta" : "Quarta";
+
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div class="teamLeft">
+            <img src="${team.logo}" alt="${team.name}">
+            <div class="meta">
+              <div class="name" title="${team.name}">${team.name}</div>
+              <div class="status">Status: ${team.status} • Dia: ${diaLabel}</div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-sm btn-amber" type="button" onclick="editTeam(${index})">Editar</button>
+            <button class="btn btn-sm btn-danger" type="button" onclick="deleteTeam(${index})">Excluir</button>
+            <button class="btn btn-sm btn-muted" type="button" onclick="viewTeamDetails(${index})">Detalhes</button>
+          </div>
+        `;
+        teamList.appendChild(li);
+      });
+
+      if (!teams.length) {
+        teamList.innerHTML = `<div style="margin-top:12px;">Nenhum time cadastrado ainda.</div>`;
+      }
+    }
+
+    function editTeam(index) {
+      const newName = prompt("Edite o nome do time:", teams[index].name);
+      if (newName && newName.trim()) {
+        const cleanedName = newName.trim();
+
+        const duplicated = teams.some((team, i) =>
+          i !== index && team.name.toLowerCase() === cleanedName.toLowerCase()
+        );
+
+        if (duplicated) {
+          alert("Já existe outro time com esse nome neste dia.");
+          return;
+        }
+
+        teams[index].name = cleanedName;
+        if (!teams[index].playDay) teams[index].playDay = getDay();
+
+        localStorage.setItem(teamsKey(), JSON.stringify(teams));
+        updateCounter();
+        alert("Time atualizado com sucesso!");
+        viewTeams();
+      }
+    }
+
+    function deleteTeam(index) {
+      if (confirm("Tem certeza que deseja excluir este time?")) {
+        teams.splice(index, 1);
+
+        // recoloca o time-base correspondente para manter sempre 24
+        teams = mergeWithBaseTeams(teams, getDay());
+
+        localStorage.setItem(teamsKey(), JSON.stringify(teams));
+        updateCounter();
+        alert("Time excluído com sucesso!");
+        viewTeams();
+      }
+    }
+
+    function viewTeamDetails(index) {
+      loadTeamsFromLocalStorage();
+      showOnly("teamDetails");
+
+      const team = teams[index];
+      const dia = normalizeDay(team.playDay) || getDay();
+      const diaLabel = dia === "quinta" ? "Quinta" : "Quarta";
+
+      const teamInfo = document.getElementById("teamInfo");
+
+      teamInfo.innerHTML = `
+        <div class="details">
+          <img src="${team.logo}" alt="${team.name}">
+          <div class="box">
+            <h3>${team.name}</h3>
+            <p><strong>Dia:</strong> ${diaLabel}</p>
+            <p><strong>Status:</strong> ${team.status}</p>
+            ${
+              team.status === "Eliminado"
+                ? `<p><strong>Eliminado na fase:</strong> ${team.eliminatedIn}</p>
+                   <p><strong>Eliminado por:</strong> ${team.eliminatedBy}</p>`
+                : ""
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function createDesignation() {
+      loadTeamsFromLocalStorage();
+      if (teams.length < REQUIRED_SLOTS) {
+        alert(`Você precisa ter ${REQUIRED_SLOTS} times cadastrados no dia para montar o confronto.`);
+        return;
+      }
+      window.location.href = "/times";
+    }
+
+    function saveDesignation() {
+      alert("Designação salva com sucesso!");
+      returnToMenu();
+    }
+
+    function isDesignationComplete() {
+      const slotIds = [
+        "left1-1","left1-2","left2-1","left2-2","left3-1","left3-2",
+        "right1-1","right1-2","right2-1","right2-2","right3-1","right3-2"
+      ];
+
+      const packed = localStorage.getItem(designationKey());
+      if (packed) {
+        try {
+          const obj = JSON.parse(packed);
+          return slotIds.every(id => obj[id] && obj[id].name && obj[id].logo);
+        } catch (e) {}
+      }
+
+      return slotIds.every(id => {
+        const v = localStorage.getItem(slotKey(id));
+        if (!v) return false;
+        const t = JSON.parse(v);
+        return t && t.name && t.logo;
+      });
+    }
+
+    function createSelecao() {
+      loadTeamsFromLocalStorage();
+      if (teams.length < REQUIRED_SLOTS) {
+        alert(`Você precisa ter ${REQUIRED_SLOTS} times cadastrados no dia para montar o confronto.`);
+        return;
+      }
+      window.location.href = "/selecao";
+    }
+
+    function openChamp2() {
+      const d = getDay();
+      localStorage.setItem("currentDay", d);
+      localStorage.setItem("cupActiveDay", d);
+
+      if (!isDesignationComplete()) {
+        alert(`Você precisa preencher todos os slots do Confronto 2x2 (${d === "quinta" ? "Quinta" : "Quarta"}) antes de abrir o campeonato.`);
+        return;
+      }
+
+      localStorage.removeItem(cupKey());
+      window.location.href = "/campeonato";
+    }
+
+    function openChamp4() {
+      window.location.href = "/selecao_camp";
+    }
+
+    (function init() {
+      paintDayPill();
+
+      const day = localStorage.getItem("currentDay");
+      if (day) {
+        setDay(day);
+        loadTeamsFromLocalStorage();
+        showOnly("menu");
+      } else {
+        showOnly("teamSelection");
+      }
+    })();
+  </script>
+</body>
+</html>

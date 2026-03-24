@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SUPER COPA LIGAGOL SS AGROINDUSTRIAL 2026 - Seleção 3x3</title>
+  <style>
+    body{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('/static/img/FUNDO.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      color: #FFFFFF;
+    }
+
+    header{
+      background-color: rgba(0,0,0,0.8);
+      color: #FFD700;
+      text-align: center;
+      padding: 1.5rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    header h1{
+      margin: 0;
+      font-size: 2.2rem;
+    }
+
+    .container{
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,215,0,.6);
+      background: rgba(255,215,0,.08);
+      color:#FFD700;
+      font-weight: 900;
+    }
+
+    .groups-grid{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .group{
+      margin-bottom: 10px;
+    }
+
+    .group h3{
+      text-align: center;
+      margin: 0 0 14px;
+      font-size: 1.4rem;
+      color: #FFD700;
+    }
+
+    .group-slots{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .team-slot{
+      min-width: 0;
+      height: 56px;
+      border: 1px solid #FFD700;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      background-color: rgba(255,255,255,0.10);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .team-slot:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.14);
+    }
+
+    .team-slot.selected{
+      outline: 3px solid rgba(255,215,0,.35);
+    }
+
+    .team-slot img{
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,.25);
+      background:#fff;
+      flex: 0 0 auto;
+    }
+
+    .team-slot span{
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 8px;
+      min-width: 0;
+    }
+
+    .team-list{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .team-item{
+      width: 170px;
+      height: 52px;
+      border: 1px solid #FFD700;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      background-color: rgba(255,255,255,0.10);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .team-item:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.14);
+    }
+
+    .team-item img{
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,.25);
+      background:#fff;
+      flex: 0 0 auto;
+    }
+
+    .team-item span{
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 8px;
+      min-width: 0;
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      justify-content: center;
+    }
+
+    button{
+      padding: 10px 16px;
+      font-size: 15px;
+      font-weight: 900;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .btn-save{ background:#28a745; color:#fff; }
+    .btn-clear{ background:#dc3545; color:#fff; }
+    .btn-draw{ background:#8b5cf6; color:#fff; }
+    .btn-present{ background:#ffaa00; color:#fff; }
+    .btn-champ{ background:#007bff; color:#fff; }
+    .btn-back{ background:#6c757d; color:#fff; }
+    .btn-undo{ background:#17a2b8; color:#fff; }
+
+    @media (max-width: 900px){
+      .groups-grid{
+        grid-template-columns: 1fr;
+      }
+
+      .group-slots{
+        grid-template-columns: 1fr;
+      }
+
+      .team-item{
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>SUPER COPA LIGAGOL 2026 - Seleção 3x3</h1>
+</header>
+
+<div class="container">
+
+  <div class="topbar">
+    <div class="badge" id="dayBadge">Dia: —</div>
+    <div class="badge" style="opacity:.9;border-color:rgba(255,255,255,.18);color:#fff;background:rgba(255,255,255,.08)">
+      Clique no slot → clique no time
+    </div>
+  </div>
+
+  <div id="designation">
+    <h2 style="margin:0 0 14px;">Distribuição dos Times</h2>
+    <div class="groups-grid" id="groupsContainer"></div>
+  </div>
+
+  <div style="margin-top:12px;">
+    <h3 style="margin:0 0 10px;color:#FFD700;">Times Disponíveis</h3>
+    <div class="team-list" id="teamList"></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-save" onclick="saveDesignation()">Salvar</button>
+    <button class="btn-clear" onclick="clearDesignation()">Limpar Todos</button>
+    <button class="btn-undo" onclick="undoLastSelection()">Limpar último</button>
+    <button class="btn-draw" onclick="drawRandom()">Sortear 1</button>
+    <button class="btn-draw" onclick="drawRandomAll()">Sortear Todos</button>
+    <button class="btn-present" onclick="openPresentation()">Apresentação</button>
+    <button class="btn-back" onclick="returnToMenu()">Voltar</button>
+  </div>
+
+</div>
+
+<script>
+  // =============================
+  // CONFIGURAÇÃO DOS GRUPOS 3x3
+  // =============================
+  const groupLetters = ["A","B","C","D","E","F","G","H"];
+  const teamsPerGroup = 3;
+
+  const slotIds = [];
+  groupLetters.forEach(group => {
+    for (let i = 1; i <= teamsPerGroup; i++) {
+      slotIds.push(`group${group}-${i}`);
+    }
+  });
+
+  const legacySlotIds = [];
+
+  function renderGroups(){
+    const container = document.getElementById("groupsContainer");
+    container.innerHTML = "";
+
+    groupLetters.forEach(group => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "group";
+
+      let slotsHtml = "";
+      for (let i = 1; i <= teamsPerGroup; i++) {
+        const slotId = `group${group}-${i}`;
+        slotsHtml += `<div class="team-slot" id="${slotId}" onclick="selectSlot('${slotId}')"></div>`;
+      }
+
+      wrapper.innerHTML = `
+        <h3>Grupo ${group}</h3>
+        <div class="group-slots">
+          ${slotsHtml}
+        </div>
+      `;
+
+      container.appendChild(wrapper);
+    });
+  }
+
+  // =============================
+  // DIA
+  // =============================
+  function normalizeDay(d){
+    return (d || "").toString().trim().toLowerCase();
+  }
+
+  function dayKey(){
+    const raw =
+      localStorage.getItem("currentDay") ||
+      localStorage.getItem("cupActiveDay") ||
+      "quarta";
+    return normalizeDay(raw) || "quarta";
+  }
+
+  function dayLabel(day){
+    return day === "quinta" ? "Quinta" : "Quarta";
+  }
+
+  function paintDayUI(){
+    document.getElementById("dayBadge").textContent = `Dia: ${dayLabel(dayKey())}`;
+  }
+
+  // =============================
+  // LISTA DE TIMES (fallback)
+  // =============================
+  let teamsFallback = [
+    { name: "E.C LEÃO 70", logo: "/static/logos/LEAO.png" },
+    { name: "AMIGOS DA ANTIGA", logo: "/static/logos/ADA.png" },
+    { name: "PSG", logo: "/static/logos/SELECAO_GUARULHOS.png" },
+    { name: "GTX", logo: "/static/logos/GTX.png" },
+    { name: "AJAX F.C", logo: "/static/logos/AJAX.png" },
+    { name: "SÓ CACHAÇA", logo: "/static/logos/SO_CACHACA.png" },
+    { name: "ARSENAL GUARULHOS", logo: "/static/logos/ARSENAL_GUARULHOS.png" },
+    { name: "CONFIANÇA", logo: "/static/logos/CONFIANCA.png" },
+    { name: "SÓ MALOKA", logo: "/static/logos/SO_MALOKA.png" },
+    { name: "DIAMANTE", logo: "/static/logos/DIAMANTE.png" },
+    { name: "ESPADA DE OURO", logo: "/static/logos/ESPADA_DE_OURO.png" },
+    { name: "FOGO NA BOMBA", logo: "/static/logos/FOGO_NA_BOMBA.png" },
+    { name: "FUT BEC", logo: "/static/logos/FUTBEC.png" },
+    { name: "CAIXA BAIXA", logo: "/static/logos/CAIXA_BAIXA.png" },
+    { name: "LA MAFIA F.C", logo: "/static/logos/LA_MAFIA.png" },
+    { name: "MONTE SANTO", logo: "/static/logos/MONTE_SANTO.png" },
+    { name: "NINGUÉM BOM", logo: "/static/logos/NINGUEM_BOM.png" },
+    { name: "E.C. NOROESTE", logo: "/static/logos/NOROESTE.png" },
+    { name: "OS LAGOAS", logo: "/static/logos/OS_LAGOAS.png" },
+    { name: "PURA CALMA", logo: "/static/logos/PURA_CALMA.png" },
+    { name: "SCF ESQUADRÃO", logo: "/static/logos/ESQUADRAO.png" },
+    { name: "TRADIÇÃO PERUS", logo: "/static/logos/TRADICAO_ZO.png" },
+    { name: "VILA LUIZA F.C", logo: "/static/logos/VILA_LUIZA.png" },
+    { name: "S.C. XI GAROTOS", logo: "/static/logos/XI_GAROTOS.png" }
+  ];
+
+  // =============================
+  // RESPEITAR O DIA: PEGA APENAS teams-<dia>
+  // =============================
+  let teams = [];
+
+  function teamsKey(){
+    return `teams-${dayKey()}`;
+  }
+
+  function teamBelongsToThisDay(team){
+    const td = normalizeDay(team?.playDay);
+    if (!td) return true;
+    return td === dayKey() || td === "ambos";
+  }
+
+  function loadTeamsFromLocalStorage(){
+    const rawDay = localStorage.getItem(teamsKey());
+
+    if (rawDay) {
+      try {
+        const arr = JSON.parse(rawDay);
+        if (Array.isArray(arr)) {
+          teams = arr
+            .filter(Boolean)
+            .filter(t => t?.name && t?.logo)
+            .filter(teamBelongsToThisDay)
+            .map(t => ({ name: t.name, logo: t.logo, playDay: t.playDay || dayKey() }));
+
+          localStorage.setItem(teamsKey(), JSON.stringify(teams));
+          return;
+        }
+      } catch {}
+    }
+
+    teams = teamsFallback.map(t => ({ ...t, playDay: dayKey() }));
+  }
+
+  let selectedSlot = null;
+
+  function slotKey(slotId){
+    return `slot-${dayKey()}-${slotId}`;
+  }
+
+  function designationKey(){
+    return `designation-${dayKey()}`;
+  }
+
+  // =============================
+  // DESFAZER (histórico por dia)
+  // =============================
+  function historyKey(){
+    return `slotHistory-${dayKey()}`;
+  }
+
+  function getHistory(){
+    const raw = localStorage.getItem(historyKey());
+    if (!raw) return [];
+    try {
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function setHistory(arr){
+    localStorage.setItem(historyKey(), JSON.stringify(arr || []));
+  }
+
+  function pushHistory(entry){
+    const hist = getHistory();
+    hist.push(entry);
+    setHistory(hist);
+  }
+
+  // =============================
+  // Render Slot
+  // =============================
+  function renderSlot(slotId, team){
+    const el = document.getElementById(slotId);
+    if (!el) return;
+
+    if (!team) {
+      el.innerHTML = `<span style="opacity:.75;">— vazio —</span>`;
+      return;
+    }
+
+    el.innerHTML = `<span title="${team.name}">${team.name}</span><img src="${team.logo}" alt="${team.name}">`;
+  }
+
+  function selectSlot(slotId){
+    if (selectedSlot) {
+      const prev = document.getElementById(selectedSlot);
+      if (prev) prev.classList.remove("selected");
+    }
+
+    selectedSlot = slotId;
+    const el = document.getElementById(slotId);
+    if (el) el.classList.add("selected");
+  }
+
+  function isTeamUsed(team){
+    const packed = localStorage.getItem(designationKey());
+    if (packed) {
+      try {
+        const obj = JSON.parse(packed);
+        return Object.values(obj || {}).some(t => t && t.name === team.name && t.logo === team.logo);
+      } catch {}
+    }
+
+    for (const sid of slotIds) {
+      const raw = localStorage.getItem(slotKey(sid));
+      if (!raw) continue;
+      try {
+        const t = JSON.parse(raw);
+        if (t && t.name === team.name && t.logo === team.logo) return true;
+      } catch {}
+    }
+
+    return false;
+  }
+
+  function loadTeams(){
+    const teamList = document.getElementById("teamList");
+    teamList.innerHTML = "";
+
+    teams.forEach((team, index) => {
+      if (!isTeamUsed(team)) {
+        const div = document.createElement("div");
+        div.className = "team-item";
+        div.innerHTML = `<span title="${team.name}">${team.name}</span><img src="${team.logo}" alt="${team.name}">`;
+        div.onclick = () => selectTeam(index);
+        teamList.appendChild(div);
+      }
+    });
+
+    if (!teamList.children.length) {
+      teamList.innerHTML = `<div style="opacity:.85;">Sem times disponíveis (todos já foram usados).</div>`;
+    }
+  }
+
+  function selectTeam(index){
+    if (!selectedSlot) {
+      alert("Selecione um slot antes de atribuir o time.");
+      return;
+    }
+
+    const team = teams[index];
+
+    let prev = null;
+    const prevRaw = localStorage.getItem(slotKey(selectedSlot));
+    if (prevRaw) {
+      try { prev = JSON.parse(prevRaw); } catch {}
+    }
+
+    const toSave = { name: team.name, logo: team.logo, playDay: dayKey() };
+
+    pushHistory({
+      ts: Date.now(),
+      slotId: selectedSlot,
+      prev: (prev && prev.name && prev.logo) ? prev : null,
+      next: toSave
+    });
+
+    localStorage.setItem(slotKey(selectedSlot), JSON.stringify(toSave));
+    renderSlot(selectedSlot, toSave);
+
+    const el = document.getElementById(selectedSlot);
+    if (el) el.classList.remove("selected");
+
+    selectedSlot = null;
+
+    saveDesignation({ silent: true });
+    loadTeams();
+  }
+
+  function saveDesignation({ silent = false } = {}){
+    const designation = {};
+    let filled = 0;
+
+    slotIds.forEach(id => {
+      const raw = localStorage.getItem(slotKey(id));
+      if (!raw) return;
+      try {
+        const t = JSON.parse(raw);
+        if (t?.name && t?.logo) {
+          designation[id] = t;
+          filled++;
+        }
+      } catch {}
+    });
+
+    localStorage.setItem(designationKey(), JSON.stringify(designation));
+
+    localStorage.setItem("cupActiveDay", dayKey());
+    localStorage.setItem("cupLastUpdate", String(Date.now()));
+
+    if (!silent) {
+      alert(`Designação salva (${dayLabel(dayKey())})! Slots preenchidos: ${filled}/${slotIds.length}`);
+    }
+  }
+
+  function loadSavedDesignation(){
+    const packed = localStorage.getItem(designationKey());
+    if (packed) {
+      try {
+        const obj = JSON.parse(packed);
+        slotIds.forEach(id => renderSlot(id, obj?.[id] || null));
+        loadTeams();
+        return;
+      } catch {}
+    }
+
+    slotIds.forEach(id => {
+      const raw = localStorage.getItem(slotKey(id));
+      if (!raw) return renderSlot(id, null);
+      try { renderSlot(id, JSON.parse(raw)); }
+      catch { renderSlot(id, null); }
+    });
+
+    loadTeams();
+  }
+
+  // ====== RESET FORTE DO DIA ======
+  function resetDayTournamentData(day){
+    const directKeys = [
+      `designation-${day}`,
+      `cupState-${day}`,
+      `cupState_${day}`,
+      `campState-${day}`,
+      `champState-${day}`,
+      `bracketState-${day}`,
+      `selecaoState-${day}`,
+      `selecaoCampState-${day}`,
+      `selectionState-${day}`,
+      `phaseState-${day}`,
+      `cupSelectionVersion-${day}`,
+      `selectionVersion-${day}`,
+    ];
+
+    directKeys.forEach(k => localStorage.removeItem(k));
+
+    slotIds.forEach(id => localStorage.removeItem(`slot-${day}-${id}`));
+
+    localStorage.removeItem("cupState");
+    localStorage.removeItem("campState");
+    localStorage.removeItem("champState");
+    localStorage.removeItem("bracketState");
+    localStorage.removeItem("designation");
+    localStorage.removeItem(`slotHistory-${day}`);
+
+    for (let i = localStorage.length - 1; i >= 0; i--){
+      const k = localStorage.key(i);
+      if (!k) continue;
+
+      const endsWithDay = k.endsWith(`-${day}`) || k.endsWith(`_${day}`);
+      const looksLikeTournament =
+        /cup|camp|champ|bracket|phase|round|match|group|selecao/i.test(k);
+
+      if (endsWithDay && looksLikeTournament){
+        localStorage.removeItem(k);
+      }
+    }
+
+    localStorage.setItem("cupLastUpdate", String(Date.now()));
+  }
+
+  function clearDesignation(){
+    const day = dayKey();
+
+    if (!confirm(`Deseja limpar a seleção do ${dayLabel(day)}?\nIsso também vai reiniciar o campeonato desse dia.`)) return;
+
+    resetDayTournamentData(day);
+
+    slotIds.forEach(id => renderSlot(id, null));
+    selectedSlot = null;
+    loadTeams();
+
+    alert(`Seleção e campeonato do ${dayLabel(day)} foram limpos!`);
+  }
+
+  // ====== SORTEIO ======
+  function shuffleArray(arr){
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function hasAnySlotFilled(){
+    const packed = localStorage.getItem(designationKey());
+    if (packed) {
+      try {
+        const obj = JSON.parse(packed);
+        return slotIds.some(id => obj?.[id] && obj[id].name && obj[id].logo);
+      } catch {}
+    }
+
+    return slotIds.some(id => {
+      const raw = localStorage.getItem(slotKey(id));
+      if (!raw) return false;
+      try {
+        const t = JSON.parse(raw);
+        return t && t.name && t.logo;
+      } catch {
+        return false;
+      }
+    });
+  }
+
+  function filledCount(){
+    return slotIds.filter(id => {
+      const raw = localStorage.getItem(slotKey(id));
+      if (!raw) return false;
+      try {
+        const t = JSON.parse(raw);
+        return t && t.name && t.logo;
+      } catch {
+        return false;
+      }
+    }).length;
+  }
+
+  function drawRandom(){
+    loadTeamsFromLocalStorage();
+
+    if (!Array.isArray(teams) || teams.length < slotIds.length) {
+      alert(`Você precisa ter pelo menos ${slotIds.length} times cadastrados para fazer o sorteio. (Atualmente: ${teams?.length || 0})`);
+      return;
+    }
+
+    const nextSlot = slotIds.find(id => {
+      const raw = localStorage.getItem(slotKey(id));
+      if (!raw) return true;
+      try {
+        const t = JSON.parse(raw);
+        return !(t && t.name && t.logo);
+      } catch {
+        return true;
+      }
+    });
+
+    if (!nextSlot) {
+      alert(`Todos os slots já estão preenchidos (${dayLabel(dayKey())}).`);
+      return;
+    }
+
+    const availableTeams = teams.filter(t => !isTeamUsed(t));
+    if (!availableTeams.length) {
+      alert("Sem times disponíveis para sortear (todos já foram usados).");
+      return;
+    }
+
+    const rnd = Math.floor(Math.random() * availableTeams.length);
+    const team = availableTeams[rnd];
+    const toSave = { name: team.name, logo: team.logo, playDay: dayKey() };
+
+    pushHistory({
+      ts: Date.now(),
+      slotId: nextSlot,
+      prev: null,
+      next: toSave
+    });
+
+    localStorage.setItem(slotKey(nextSlot), JSON.stringify(toSave));
+    renderSlot(nextSlot, toSave);
+
+    saveDesignation({ silent: true });
+    selectedSlot = null;
+    loadTeams();
+
+    const f = filledCount();
+    if (f === slotIds.length) {
+      alert(`Sorteio concluído! (${dayLabel(dayKey())})\nSlots preenchidos: ${f}/${slotIds.length}`);
+    }
+  }
+
+  function drawRandomAll(){
+    loadTeamsFromLocalStorage();
+
+    if (!Array.isArray(teams) || teams.length < slotIds.length) {
+      alert(`Você precisa ter pelo menos ${slotIds.length} times cadastrados para fazer o sorteio. (Atualmente: ${teams?.length || 0})`);
+      return;
+    }
+
+    if (hasAnySlotFilled()) {
+      const ok = confirm(`Já existe seleção preenchida para ${dayLabel(dayKey())}.\nDeseja substituir pelo sorteio aleatório?`);
+      if (!ok) return;
+    }
+
+    const shuffled = shuffleArray(teams).slice(0, slotIds.length);
+
+    setHistory([]);
+
+    slotIds.forEach((slotId, idx) => {
+      const team = shuffled[idx];
+      const toSave = { name: team.name, logo: team.logo, playDay: dayKey() };
+
+      pushHistory({
+        ts: Date.now(),
+        slotId,
+        prev: null,
+        next: toSave
+      });
+
+      localStorage.setItem(slotKey(slotId), JSON.stringify(toSave));
+      renderSlot(slotId, toSave);
+    });
+
+    saveDesignation({ silent: true });
+
+    selectedSlot = null;
+    loadTeams();
+
+    alert(`Sorteio concluído! (${dayLabel(dayKey())})\nSlots preenchidos: ${slotIds.length}/${slotIds.length}`);
+  }
+
+  // =========================
+  // DESFAZER ULTIMA SELEÇÃO
+  // =========================
+  function undoLastSelection(){
+    const hist = getHistory();
+    if (!hist.length) {
+      alert("Não há nenhuma ação para desfazer neste dia.");
+      return;
+    }
+
+    const last = hist.pop();
+    setHistory(hist);
+
+    const { slotId, prev } = last || {};
+    if (!slotId) return;
+
+    if (prev && prev.name && prev.logo) {
+      localStorage.setItem(slotKey(slotId), JSON.stringify(prev));
+      renderSlot(slotId, prev);
+    } else {
+      localStorage.removeItem(slotKey(slotId));
+      renderSlot(slotId, null);
+    }
+
+    if (selectedSlot === slotId) {
+      const el = document.getElementById(selectedSlot);
+      if (el) el.classList.remove("selected");
+      selectedSlot = null;
+    }
+
+    saveDesignation({ silent: true });
+    loadTeams();
+  }
+
+  // ====== APRESENTAÇÃO ======
+  let presentationWindow = null;
+  function openPresentation() {
+    localStorage.setItem("cupActiveDay", dayKey());
+
+    const url = "/selecao_sorteio";
+    if (presentationWindow && !presentationWindow.closed) {
+      presentationWindow.focus();
+      return;
+    }
+
+    presentationWindow = window.open(
+      url,
+      "apresentacao",
+      "width=1280,height=720,menubar=0,toolbar=0,location=0,status=0"
+    );
+  }
+
+  // ====== COMEÇAR CAMPEONATO ======
+  function openCampeonato(){
+    const day = dayKey();
+    const f = filledCount();
+
+    if (f !== slotIds.length) {
+      alert(`Você precisa preencher todos os ${slotIds.length} slots antes de começar o campeonato.\nProgresso: ${f}/${slotIds.length}`);
+      return;
+    }
+
+    const ok = confirm(`Se um campeonato já estiver em andamento para esse dia, ele será reiniciado ao abrir um novo campeonato.\nDeseja continuar?`);
+    if (!ok) return;
+
+    localStorage.setItem("cupActiveDay", day);
+
+    saveDesignation({ silent: true });
+
+    localStorage.removeItem(`cupState-${day}`);
+    localStorage.removeItem(`campState-${day}`);
+    localStorage.removeItem(`selecaoCampState-${day}`);
+    localStorage.removeItem(`bracketState-${day}`);
+
+    for (let i = localStorage.length - 1; i >= 0; i--){
+      const k = localStorage.key(i);
+      if (!k) continue;
+      const endsWithDay = k.endsWith(`-${day}`) || k.endsWith(`_${day}`);
+      const looksLikeTournament = /cup|camp|champ|bracket|phase|round|match/i.test(k);
+      if (endsWithDay && looksLikeTournament) localStorage.removeItem(k);
+    }
+
+    localStorage.setItem("cupLastUpdate", String(Date.now()));
+    window.location.href = "/selecao_camp";
+  }
+
+  function returnToMenu(){
+    window.location.href = "/";
+  }
+
+  // Atualiza UI se mudar o dia em outra aba
+  window.addEventListener("storage", (e) => {
+    if (!e.key) return;
+
+    if (e.key === "currentDay" || e.key === "cupActiveDay") {
+      paintDayUI();
+      loadTeamsFromLocalStorage();
+      selectedSlot = null;
+      slotIds.forEach(id => renderSlot(id, null));
+      loadSavedDesignation();
+    }
+  });
+
+  // INIT
+  renderGroups();
+  paintDayUI();
+  slotIds.forEach(id => renderSlot(id, null));
+  loadTeamsFromLocalStorage();
+  loadSavedDesignation();
+</script>
+
+</body>
+</html>

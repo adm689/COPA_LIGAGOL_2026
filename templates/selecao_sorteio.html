@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorteio 3x3 - SUPER COPA LIGAGOL SS AGROINDUSTRIAL 2026</title>
+  <style>
+    *{
+      box-sizing: border-box;
+    }
+
+    body{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.75)),
+        url('/static/img/FUNDO.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      color: #FFFFFF;
+    }
+
+    header{
+      background: linear-gradient(90deg, rgba(0,0,0,.92), rgba(30,30,30,.82), rgba(0,0,0,.92));
+      color: #FFD700;
+      text-align: center;
+      padding: 22px 16px;
+      box-shadow: 0 2px 20px rgba(0,0,0,.35);
+      border-bottom: 1px solid rgba(255,215,0,.25);
+    }
+
+    header h1{
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .container{
+      max-width: 1500px;
+      margin: 22px auto;
+      padding: 20px;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,215,0,.45);
+      background: rgba(255,215,0,.08);
+      color:#FFD700;
+      font-weight: 900;
+      font-size: .98rem;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 14px rgba(255,215,0,.08);
+    }
+
+    #titleDay{
+      margin: 0 0 20px;
+      text-align: center;
+      font-size: 2rem;
+      color: #fff;
+      font-weight: 900;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+
+    .groups-grid{
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .group{
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,215,0,.25);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.22);
+      backdrop-filter: blur(6px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .group::before{
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,215,0,.08), transparent 35%);
+      pointer-events: none;
+    }
+
+    .group h3{
+      margin: 0 0 14px;
+      text-align: center;
+      font-size: 1.3rem;
+      color: #FFD700;
+      font-weight: 900;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+    }
+
+    .group-slots{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .team-slot{
+      min-width: 0;
+      min-height: 72px;
+      border: 1px solid rgba(255,215,0,.35);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.08);
+      overflow: hidden;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+
+    .team-slot:hover{
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.11);
+      border-color: rgba(255,215,0,.6);
+    }
+
+    .team-slot.empty{
+      justify-content: center;
+      color: rgba(255,255,255,.6);
+      font-style: italic;
+      background: rgba(255,255,255,.04);
+    }
+
+    .team-slot img{
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,.28);
+      background:#fff;
+      flex: 0 0 auto;
+      box-shadow: 0 0 10px rgba(0,0,0,.22);
+    }
+
+    .team-name{
+      font-weight: 900;
+      font-size: 1rem;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+      flex: 1;
+    }
+
+    #team-animation{
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,.68);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .animation-card{
+      width: min(92vw, 520px);
+      background: linear-gradient(180deg, rgba(20,20,20,.96), rgba(0,0,0,.92));
+      border: 2px solid rgba(255,215,0,.75);
+      border-radius: 26px;
+      padding: 28px 24px;
+      text-align: center;
+      box-shadow: 0 0 35px rgba(255,215,0,.18);
+      animation: popIn .35s ease;
+    }
+
+    .animation-label{
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,215,0,.12);
+      color: #FFD700;
+      font-weight: 900;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      font-size: .92rem;
+      border: 1px solid rgba(255,215,0,.35);
+    }
+
+    .animation-card h2{
+      margin: 0 0 18px;
+      color: #fff;
+      font-size: 2rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1.15;
+    }
+
+    .animation-card img{
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #FFD700;
+      background: #fff;
+      box-shadow: 0 0 28px rgba(255,215,0,.22);
+    }
+
+    @keyframes popIn{
+      from{
+        transform: scale(.88);
+        opacity: 0;
+      }
+      to{
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 1250px){
+      .groups-grid{
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 950px){
+      .groups-grid{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      header h1{
+        font-size: 2rem;
+      }
+
+      #titleDay{
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (max-width: 620px){
+      .groups-grid{
+        grid-template-columns: 1fr;
+      }
+
+      .container{
+        padding: 14px;
+      }
+
+      .team-slot{
+        min-height: 66px;
+      }
+
+      .animation-card h2{
+        font-size: 1.55rem;
+      }
+
+      .animation-card img{
+        width: 170px;
+        height: 170px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>SUPER COPA LIGAGOL 2026</h1>
+  </header>
+
+  <div class="container">
+    <div class="topbar">
+      <div class="badge" id="dayBadge">Dia: —</div>
+      <div class="badge" style="color:#fff;border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.08);">
+        Apresentação em tempo real
+      </div>
+    </div>
+
+    <div id="designation">
+      <h2 id="titleDay">Sorteio</h2>
+      <div class="groups-grid" id="groupsContainer"></div>
+    </div>
+  </div>
+
+  <div id="team-animation">
+    <div class="animation-card" id="animationCard"></div>
+  </div>
+
+  <script>
+    let animationQueue = [];
+    let isAnimating = false;
+    let previousSlotState = {};
+    let recentAnimations = new Set();
+
+    const groupLetters = ["A", "B", "C", "D", "E", "F", "G", "H"];
+    const teamsPerGroup = 3;
+
+    const slotIds = [];
+    groupLetters.forEach(group => {
+      for (let i = 1; i <= teamsPerGroup; i++) {
+        slotIds.push(`group${group}-${i}`);
+      }
+    });
+
+    const legacySlotIds = [];
+
+    function renderGroups(){
+      const container = document.getElementById("groupsContainer");
+      container.innerHTML = "";
+
+      groupLetters.forEach(group => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "group";
+
+        let slotsHtml = "";
+        for (let i = 1; i <= teamsPerGroup; i++) {
+          const slotId = `group${group}-${i}`;
+          slotsHtml += `<div class="team-slot empty" id="${slotId}">— aguardando sorteio —</div>`;
+        }
+
+        wrapper.innerHTML = `
+          <h3>Grupo ${group}</h3>
+          <div class="group-slots">
+            ${slotsHtml}
+          </div>
+        `;
+
+        container.appendChild(wrapper);
+      });
+    }
+
+    function dayKey(){
+      const raw =
+        localStorage.getItem("currentDay") ||
+        localStorage.getItem("cupActiveDay") ||
+        "quarta";
+
+      return String(raw).trim().toLowerCase();
+    }
+
+    function dayLabel(day){
+      return day === "quinta" ? "Quinta" : "Quarta";
+    }
+
+    function slotKey(slotId){
+      return `slot-${dayKey()}-${slotId}`;
+    }
+
+    function paintDayUI(){
+      const day = dayKey();
+      document.getElementById("dayBadge").textContent = `Dia: ${dayLabel(day)}`;
+      document.getElementById("titleDay").textContent = `Sorteio ${dayLabel(day)}`;
+    }
+
+    function emptySlot(el){
+      el.classList.add("empty");
+      el.innerHTML = `— aguardando sorteio —`;
+    }
+
+    function fillSlot(el, team){
+      el.classList.remove("empty");
+      el.innerHTML = `
+        <img src="${team.logo}" alt="${team.name}">
+        <div class="team-name" title="${team.name}">${team.name}</div>
+      `;
+    }
+
+    function getCurrentSlotState(){
+      const state = {};
+
+      slotIds.forEach(id => {
+        const raw = localStorage.getItem(slotKey(id));
+        if (!raw) {
+          state[id] = null;
+          return;
+        }
+
+        try {
+          const team = JSON.parse(raw);
+          if (team && team.name && team.logo) {
+            state[id] = {
+              name: team.name,
+              logo: team.logo
+            };
+          } else {
+            state[id] = null;
+          }
+        } catch {
+          state[id] = null;
+        }
+      });
+
+      return state;
+    }
+
+    function renderAllSlots(){
+      const state = getCurrentSlotState();
+
+      slotIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        const team = state[id];
+        if (!team) {
+          emptySlot(el);
+        } else {
+          fillSlot(el, team);
+        }
+      });
+
+      return state;
+    }
+
+    function teamAnimationKey(slotId, team){
+      return `${dayKey()}|${slotId}|${team.name}|${team.logo}`;
+    }
+
+    function enqueueAnimation(slotId, team){
+      if (!team?.name || !team?.logo) return;
+
+      const key = teamAnimationKey(slotId, team);
+      if (recentAnimations.has(key)) return;
+
+      recentAnimations.add(key);
+
+      animationQueue.push({
+        slotId,
+        name: team.name,
+        logo: team.logo
+      });
+
+      if (recentAnimations.size > 200) {
+        recentAnimations = new Set(Array.from(recentAnimations).slice(-100));
+      }
+
+      playNextAnimation();
+    }
+
+    function detectNewAssignmentsAndAnimate(newState){
+      slotIds.forEach(slotId => {
+        const prev = previousSlotState[slotId];
+        const curr = newState[slotId];
+
+        const changed =
+          (!prev && curr) ||
+          (prev && curr && (prev.name !== curr.name || prev.logo !== curr.logo));
+
+        if (changed && curr) {
+          enqueueAnimation(slotId, curr);
+        }
+      });
+
+      previousSlotState = JSON.parse(JSON.stringify(newState));
+    }
+
+    function playNextAnimation(){
+      if (isAnimating || animationQueue.length === 0) return;
+
+      const team = animationQueue.shift();
+      isAnimating = true;
+
+      const animationOverlay = document.getElementById("team-animation");
+      const animationCard = document.getElementById("animationCard");
+
+      animationCard.innerHTML = `
+        <div class="animation-label">Time Sorteado</div>
+        <h2>${team.name}</h2>
+        <img src="${team.logo}" alt="${team.name}">
+      `;
+
+      animationOverlay.style.display = "flex";
+
+      setTimeout(() => {
+        animationOverlay.style.display = "none";
+        isAnimating = false;
+        playNextAnimation();
+      }, 2200);
+    }
+
+    function refreshFromStorage({ animate = true } = {}){
+      const newState = renderAllSlots();
+      if (animate) {
+        detectNewAssignmentsAndAnimate(newState);
+      } else {
+        previousSlotState = JSON.parse(JSON.stringify(newState));
+      }
+    }
+
+    window.addEventListener("storage", (e) => {
+      if (!e.key) return;
+
+      if (e.key === "currentDay" || e.key === "cupActiveDay") {
+        paintDayUI();
+        previousSlotState = {};
+        recentAnimations.clear();
+        refreshFromStorage({ animate: false });
+        return;
+      }
+
+      const prefix = `slot-${dayKey()}-`;
+      if (e.key.startsWith(prefix)) {
+        refreshFromStorage({ animate: true });
+      }
+    });
+
+    function clearBracket(){
+      if (!confirm(`Limpar seleção do ${dayLabel(dayKey())}?`)) return;
+
+      slotIds.forEach(id => localStorage.removeItem(slotKey(id)));
+      legacySlotIds.forEach(id => localStorage.removeItem(slotKey(id)));
+      localStorage.removeItem(`designation-${dayKey()}`);
+
+      animationQueue = [];
+      isAnimating = false;
+      recentAnimations.clear();
+      previousSlotState = {};
+      refreshFromStorage({ animate: false });
+    }
+
+    renderGroups();
+    paintDayUI();
+
+    legacySlotIds.forEach(id => localStorage.removeItem(slotKey(id)));
+
+    refreshFromStorage({ animate: false });
+
+    setInterval(() => {
+      paintDayUI();
+      refreshFromStorage({ animate: true });
+    }, 800);
+  </script>
+</body>
+</html>
