@@ -415,13 +415,13 @@
         <div class="dayCard" onclick="goToMenu('quarta')">
           <div class="dayTag">QUARTA-FEIRA</div>
           <h3>Quarta — 25/03</h3>
-          <p>Gerencie 24 times do dia e os confrontos.</p>
+          <p>Gerencie 21 times do dia e os confrontos.</p>
         </div>
 
         <div class="dayCard" onclick="goToMenu('quinta')">
           <div class="dayTag">QUINTA-FEIRA</div>
           <h3>Quinta — 26/03</h3>
-          <p>Gerencie 24 times do dia e os confrontos.</p>
+          <p>Gerencie 21 times do dia e os confrontos.</p>
         </div>
       </div>
 
@@ -450,14 +450,14 @@
       <div class="panelHeader">
         <div>
           <h2>Cadastrar times</h2>
-          <p>Cadastre até 24 times para o dia selecionado.</p>
+          <p>Cadastre até 21 times para o dia selecionado.</p>
         </div>
         <div class="right">
           <button class="btn btn-ghost" type="button" onclick="returnToMenu()">Voltar</button>
         </div>
       </div>
 
-      <div class="counter" id="teamCounter">Times cadastrados: 0 / 24</div>
+      <div class="counter" id="teamCounter">Times cadastrados: 0 / 21</div>
 
       <form id="teamForm">
         <div class="field">
@@ -476,7 +476,7 @@
         </div>
       </form>
 
-      <div class="hint">Cada dia aceita no máximo 24 times.</div>
+      <div class="hint">Cada dia aceita no máximo 21 times.</div>
     </div>
 
     <div id="viewTeams" class="panel hidden">
@@ -490,7 +490,7 @@
         </div>
       </div>
 
-      <div class="counter" id="teamCounterView">Times cadastrados: 0 / 24</div>
+      <div class="counter" id="teamCounterView">Times cadastrados: 0 / 21</div>
       <ul id="teamList"></ul>
     </div>
 
@@ -542,8 +542,8 @@
   </div>
 
   <script>
-    const MAX_TEAMS = 24;
-    const REQUIRED_SLOTS = 24;
+    const MAX_TEAMS = 21;
+    const REQUIRED_SLOTS = 21;
     const DEFAULT_LOGO = "/static/logos/DEFAULT.png";
 
     let currentDay = localStorage.getItem("currentDay") || null;
@@ -605,9 +605,6 @@
       { name: "UNIÃO DA PRAÇA FC", logo: "/static/logos/UNIÃO DA PRAÇA FC.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
       { name: "VAGA KING SPORTS", logo: "/static/logos/VAGA KING SPORTS.jpeg", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
       { name: "VERA CRUZ FC", logo: "/static/logos/VERA CRUZ FC.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
-      { name: "Quarta 22", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
-      { name: "Quarta 23", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
-      { name: "Quarta 24", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quarta" },
 
       // ================= QUINTA =================
       { name: "Quinta 01", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
@@ -631,9 +628,6 @@
       { name: "Quinta 19", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
       { name: "Quinta 20", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
       { name: "Quinta 21", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
-      { name: "Quinta 22", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
-      { name: "Quinta 23", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" },
-      { name: "Quinta 24", logo: "/static/logos/DEFAULT.png", status: "Ativo", eliminatedIn: null, eliminatedBy: null, playDay: "quinta" }
     ];
 
     function getBaseTeamsForDay(day){
@@ -864,7 +858,7 @@
       if (confirm("Tem certeza que deseja excluir este time?")) {
         teams.splice(index, 1);
 
-        // recoloca o time-base correspondente para manter sempre 24
+        // recoloca o time-base correspondente para manter sempre 21
         teams = mergeWithBaseTeams(teams, getDay());
 
         localStorage.setItem(teamsKey(), JSON.stringify(teams));
